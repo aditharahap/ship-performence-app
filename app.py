@@ -7,11 +7,13 @@ import joblib
 st.set_page_config(page_title="Ship Performance Clustering", layout="centered")
 
 # Judul Aplikasi
-st.title("Aplikasi Clustering Performa Kapal")
+st.title("🚢 Aplikasi Clustering Performa Kapal")
 st.write("""
-Aplikasi ini menggunakan model **K-Means Clustering** untuk mengelompokkan kapal 
-berdasarkan profil kecepatan, daya mesin, biaya, dan pendapatannya.
+Aplikasi ini menggunakan model **K-Means Clustering** untuk mengelompokkan performa kapal 
+berdasarkan kecepatan, daya mesin, biaya operasional, dan pendapatannya.
 """)
+
+st.divider() # Garis pembatas
 
 # Load Model dan Scaler
 @st.cache_resource
@@ -23,18 +25,28 @@ def load_models():
 try:
     model, scaler = load_models()
 except FileNotFoundError:
-    st.error("Model tidak ditemukan! Pastikan file 'kmeans_model.pkl' dan 'scaler.pkl' ada di direktori yang sama.")
+    st.error("Model tidak ditemukan! Pastikan file 'kmeans_model.pkl' dan 'scaler.pkl' sudah diunggah.")
     st.stop()
 
-# Form Input Data
-st.sidebar.header("Masukkan Spesifikasi Kapal")
-speed = st.sidebar.slider("Speed Over Ground (knots)", min_value=0.0, max_value=40.0, value=15.0)
-power = st.sidebar.number_input("Engine Power (kW)", min_value=0.0, value=5000.0)
-cost = st.sidebar.number_input("Operational Cost (USD)", min_value=0.0, value=250000.0)
-revenue = st.sidebar.number_input("Revenue per Voyage (USD)", min_value=0.0, value=300000.0)
+# --- FORM INPUT DATA (Bukan Sidebar) ---
+st.subheader("🛠️ Masukkan Spesifikasi Kapal")
+st.write("Silakan isi parameter di bawah ini untuk menentukan segmen performa kapal:")
+
+# Menggunakan kolom agar tampilan form lebih rapi (2 kolom)
+col1, col2 = st.columns(2)
+
+with col1:
+    speed = st.slider("Speed Over Ground (knots)", min_value=0.0, max_value=40.0, value=15.0)
+    power = st.number_input("Engine Power (kW)", min_value=0.0, value=5000.0)
+
+with col2:
+    cost = st.number_input("Operational Cost (USD)", min_value=0.0, value=250000.0)
+    revenue = st.number_input("Revenue per Voyage (USD)", min_value=0.0, value=300000.0)
+
+st.write("") # Memberi sedikit jarak
 
 # Tombol Prediksi
-if st.button("Tentukan Segmentasi Kapal"):
+if st.button("Tentukan Segmentasi Kapal", type="primary"): # Menggunakan warna tombol utama
     # data input
     input_data = np.array([[speed, power, cost, revenue]])
     
@@ -45,12 +57,14 @@ if st.button("Tentukan Segmentasi Kapal"):
     cluster_result = model.predict(input_scaled)[0]
     
     # Tampilkan hasil
-    st.success(f"Berdasarkan data yang diinput, kapal ini masuk ke dalam **Cluster {cluster_result}**")
+    st.divider()
+    st.success(f"🎯 Berdasarkan spesifikasi yang diinput, kapal ini masuk ke dalam **Cluster {cluster_result}**")
     
-    # Tampilkan interpretasi dummy (bisa Anda sesuaikan dengan hasil analisis evaluasi Anda)
+    # Tampilkan interpretasi
+    st.subheader("📊 Interpretasi Cluster")
     if cluster_result == 0:
-        st.info("Karakteristik Umum: Cluster ini mungkin mewakili kapal dengan biaya seimbang dan performa standar.")
+        st.info("Karakteristik Umum: Cluster ini mungkin mewakili kapal dengan biaya seimbang dan performa operasional standar.")
     elif cluster_result == 1:
-        st.info("Karakteristik Umum: Cluster ini mungkin mewakili kapal dengan daya mesin tinggi atau biaya operasional besar.")
+        st.info("Karakteristik Umum: Cluster ini mungkin mewakili kapal dengan daya mesin tinggi atau pengeluaran biaya operasional yang besar.")
     else:
-        st.info("Karakteristik Umum: Cluster ini mungkin mewakili kapal dengan efisiensi profitabilitas terbaik.")
+        st.info("Karakteristik Umum: Cluster ini mungkin mewakili kapal dengan efisiensi bahan bakar dan profitabilitas yang terbaik.")
