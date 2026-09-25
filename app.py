@@ -7,7 +7,7 @@ import joblib
 st.set_page_config(page_title="Ship Performance Clustering", layout="centered")
 
 # Judul Aplikasi
-st.title("🚢 Aplikasi Clustering Performa Kapal")
+st.title("Aplikasi Clustering Performa Kapal")
 st.write("""
 Aplikasi ini menggunakan model **K-Means Clustering** untuk mengelompokkan kapal 
 berdasarkan profil kecepatan, daya mesin, biaya, dan pendapatannya.
