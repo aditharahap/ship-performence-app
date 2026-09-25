@@ -29,7 +29,7 @@ except FileNotFoundError:
     st.stop()
 
 # --- FORM INPUT DATA (Bukan Sidebar) ---
-st.subheader("🛠️ Masukkan Spesifikasi Kapal")
+st.subheader("Masukkan Spesifikasi Kapal")
 st.write("Silakan isi parameter di bawah ini untuk menentukan segmen performa kapal:")
 
 # Menggunakan kolom agar tampilan form lebih rapi (2 kolom)
